@@ -1,0 +1,154 @@
+#include <iostream>
+#include <string.h>
+
+using namespace std;
+
+class Tree {
+private:
+    typedef struct node {
+        char key[10];
+        char meaning[10];
+        struct node* left;
+        struct node* right;
+    } btree;
+
+public:
+    btree* New;
+    btree* root;
+    int comparisons; // variable to track comparisons
+
+    Tree();
+    void create();
+    void insert(btree* root, btree* New);
+    void inorder();
+    void inorder_rec(btree* root);
+    void postorder();
+    void postorder_rec(btree* root);
+    int getMaxComparisons(const char* key); // function to get maximum comparisons
+};
+
+Tree::Tree() {
+    root = NULL;
+    comparisons = 0; // initialize comparisons to 0
+}
+
+void Tree::inorder() {
+    inorder_rec(root);
+}
+
+void Tree::inorder_rec(btree* root) {
+    if (root != NULL) {
+        inorder_rec(root->left);
+        cout << "\n\t" << root->key << "\t" << root->meaning;
+        inorder_rec(root->right);
+    }
+}
+
+void Tree::postorder() {
+    postorder_rec(root);
+}
+
+void Tree::postorder_rec(btree* root) {
+    if (root != NULL) {
+        postorder_rec(root->right);
+        cout << "\n\t" << root->key << "\t" << root->meaning;
+        postorder_rec(root->left);
+    }
+}
+
+void Tree::create() {
+    New = new btree;
+    New->left = New->right = NULL;
+    cout << "\n\tEnter the Keyword: ";
+    cin >> New->key;
+    cout << "\n\tEnter the Meaning of " << New->key << " : ";
+    cin >> New->meaning;
+    if (root == NULL) {
+        root = New;
+    } else {
+        insert(root, New);
+    }
+}
+
+void Tree::insert(btree* root, btree* New) {
+    comparisons++; // increment comparisons for each comparison made during insertion
+
+    if (strcmp(root->key, New->key) > 0) {
+        if (root->left == NULL)
+            root->left = New;
+        else
+            insert(root->left, New);
+    } else {
+        if (root->right == NULL)
+            root->right = New;
+        else
+            insert(root->right, New);
+    }
+}
+
+int Tree::getMaxComparisons(const char* key) {
+    comparisons = 0; // reset comparisons count
+    btree* current = root;
+    while (current != NULL) {
+        comparisons++; // increment comparisons for each comparison made during searching
+        if (strcmp(key, current->key) == 0) {
+            return comparisons;
+        } else if (strcmp(key, current->key) < 0) {
+            current = current->left;
+        } else {
+            current = current->right;
+        }
+    }
+    return -1; // return -1 if keyword not found
+}
+
+int main() {
+    Tree tr;
+    int ch;
+    char ans;
+    int maxComparisons = 0; // initialize maxComparisons outside the switch statement
+    do {
+        cout << "\n\t***** BST Operations *****";
+        cout << "\n\t1. Create\n\t2. Display\n\t3. Find Maximum Comparisons\n\t4. Exit";
+        cout << "\n\t.....Enter Your Choice: ";
+        cin >> ch;
+        switch (ch) {
+            case 1:
+                do {
+                    tr.create();
+                    cout << "......Do You Want To Continue: ";
+                    cin >> ans;
+                } while (ans == 'y' || ans == 'Y');
+                break;
+            case 2:
+                cout << "\n\t\t1. Ascending\n\t\t2. Descending\n\t\t.....Enter Your Choice: ";
+                cin >> ch;
+                cout << "\n\tKeyword\tMeaning";
+                switch (ch) {
+                    case 1:
+                        tr.inorder();
+                        break;
+                    case 2:
+                        tr.postorder();
+                        break;
+                }
+                break;
+            case 3:
+                cout << "\n\tEnter the Keyword: ";
+                char searchKey[10];
+                cin >> searchKey;
+                maxComparisons = tr.getMaxComparisons(searchKey);
+                if (maxComparisons != -1) {
+                    cout << "\n\tMaximum comparisons required to find \"" << searchKey << "\": " << maxComparisons << endl;
+                } else {
+                    cout << "\n\t\"" << searchKey << "\" not found in the dictionary.\n";
+                }
+                break;
+            case 4:
+                break;
+        }
+        cout << "\n\t\t..... Do You Want to Continue: ";
+        cin >> ans;
+    } while (ans == 'y' || ans == 'Y');
+    return 0;
+}

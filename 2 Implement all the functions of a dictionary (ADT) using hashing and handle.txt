@@ -1,0 +1,147 @@
+#include<iostream>
+#include<stdlib.h>
+using namespace std;
+
+#define max 10
+
+typedef struct list {
+    int data;
+    struct list *next;
+} node_type;
+
+node_type *root[max];
+
+class Dictionary {
+public:
+    int index;
+    Dictionary();
+    void insert(int);
+    void search(int);
+    void delete_ele(int);
+    void display();
+};
+
+Dictionary::Dictionary() {
+    index = -1;
+    for(int i = 0; i < max; i++) {
+        root[i] = NULL;
+    }
+}
+
+void Dictionary::insert(int key) {
+    index = int(key % max);
+    node_type *newNode = new node_type;
+    newNode->data = key;
+    newNode->next = NULL;
+    
+    if(root[index] == NULL) {
+        root[index] = newNode;
+    } else {
+        node_type *temp = root[index];
+        while(temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+}
+
+void Dictionary::search(int key) {
+    index = int(key % max);
+    node_type *temp = root[index];
+    
+    while(temp != NULL) {
+        if(temp->data == key) {
+            cout << "\nSearch key is found!";
+            return;
+        }
+        temp = temp->next;
+    }
+    
+    cout << "\nSearch key not found.";
+}
+
+void Dictionary::delete_ele(int key) {
+    index = int(key % max);
+    node_type *temp = root[index];
+    node_type *prev = NULL;
+    
+    if(temp != NULL && temp->data == key) {
+        root[index] = temp->next;
+        delete temp;
+        cout << "\n" << key << " has been deleted.";
+        return;
+    }
+    
+    while(temp != NULL && temp->data != key) {
+        prev = temp;
+        temp = temp->next;
+    }
+    
+    if(temp == NULL) {
+        cout << "\nKey not found.";
+        return;
+    }
+    
+    prev->next = temp->next;
+    delete temp;
+    cout << "\n" << key << " has been deleted.";
+}
+
+void Dictionary::display() {
+    for(int i = 0; i < max; i++) {
+        cout << "\nIndex " << i << ": ";
+        node_type *temp = root[i];
+        while(temp != NULL) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+    }
+}
+
+int main() {
+    int val, ch, n, num;
+    char c;
+    Dictionary d;
+    
+    do {
+        cout << "\nMENU:\n1. Insert";
+        cout << "\n2. Search";
+        cout << "\n3. Delete";
+        cout << "\n4. Display";
+        cout << "\nEnter your choice: ";
+        cin >> ch;
+        
+        switch(ch) {
+            case 1:
+                cout << "\nEnter the number of elements to be inserted: ";
+                cin >> n;
+                cout << "\nEnter the elements to be inserted: ";
+                for(int i = 0; i < n; i++) {
+                    cin >> num;
+                    d.insert(num);
+                }
+                break;
+            case 2:
+                cout << "\nEnter the element to be searched: ";
+                cin >> num;
+                d.search(num);
+                break;
+            case 3:
+                cout << "\nEnter the element to be deleted: ";
+                cin >> num;
+                d.delete_ele(num);
+                break;
+            case 4:
+                cout << "\nDisplaying all elements:";
+                d.display();
+                break;
+            default:
+                cout << "\nInvalid Choice.";
+        }
+        
+        cout << "\nEnter 'y' to Continue: ";
+        cin >> c;
+    } while(c == 'y' || c == 'Y');
+
+    return 0;
+}

@@ -1,0 +1,133 @@
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+struct Employee {
+    int employeeID;
+    string name;
+    string designation;
+    double salary;
+};
+
+void addEmployee() {
+    Employee employee;
+    ofstream file("employees.txt", ios::app);
+
+    cout << "Enter Employee ID: ";
+    cin >> employee.employeeID;
+
+    cout << "Enter Name: ";
+    cin >> employee.name;
+
+    cout << "Enter Designation: ";
+    cin >> employee.designation;
+
+    cout << "Enter Salary: ";
+    cin >> employee.salary;
+
+    file << employee.employeeID << " "
+         << employee.name << " "
+         << employee.designation << " "
+         << employee.salary << endl;
+
+    file.close();
+
+    cout << "Employee added successfully!" << endl;
+}
+
+void deleteEmployee(int employeeID) {
+    bool found = false;
+    ifstream inputFile("employees.txt");
+    ofstream tempFile("temp.txt");
+
+    int currentEmployeeID;
+    string line;
+
+    while (getline(inputFile, line)) {
+        istringstream iss(line);
+        iss >> currentEmployeeID;
+
+        if (currentEmployeeID == employeeID) {
+            found = true;
+            continue;
+        }
+
+        tempFile << line << endl;
+    }
+
+    inputFile.close();
+    tempFile.close();
+
+    remove("employees.txt");
+    rename("temp.txt", "employees.txt");
+
+    if (found) {
+        cout << "Employee record with ID " << employeeID << " deleted successfully!" << endl;
+    } else {
+        cout << "Employee record not found." << endl;
+    }
+}
+
+void displayEmployees() {
+    ifstream file("employees.txt");
+
+    cout << "Employee Details:" << endl;
+    cout << "-----------------" << endl;
+
+    int employeeID;
+    string name, designation;
+    double salary;
+
+    while (file >> employeeID >> name >> designation >> salary) {
+        cout << "Employee ID: " << employeeID << endl;
+        cout << "Name: " << name << endl;
+        cout << "Designation: " << designation << endl;
+        cout << "Salary: " << salary << endl;
+        cout << "-----------------" << endl;
+    }
+
+    file.close();
+}
+
+int main() {
+    int choice;
+
+    do {
+        cout << "********** Employee Information System **********" << endl;
+        cout << "1. Add Employee" << endl;
+        cout << "2. Delete Employee" << endl;
+        cout << "3. Display Employees" << endl;
+        cout << "4. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                addEmployee();
+                break;
+            case 2: {
+                int employeeID;
+                cout << "Enter Employee ID to delete: ";
+                cin >> employeeID;
+                deleteEmployee(employeeID);
+                break;
+            }
+            case 3:
+                displayEmployees();
+                break;
+            case 4:
+                cout << "Exiting program. Goodbye!" << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+
+        cout << endl;
+
+    } while (choice != 4);
+
+    return 0;
+}

@@ -1,0 +1,135 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+
+using namespace std;
+
+struct Student {
+    int rollNumber;
+    string name;
+    char division;
+    string address;
+};
+
+void addStudent() {
+    Student student;
+    ofstream file("students.txt", ios::app);
+
+    cout << "Enter Roll Number: ";
+    cin >> student.rollNumber;
+
+    cout << "Enter Name: ";
+    cin >> student.name;
+
+    cout << "Enter Division: ";
+    cin >> student.division;
+
+    cout << "Enter Address: ";
+    cin >> student.address;
+
+    file << student.rollNumber << " "
+         << student.name << " "
+         << student.division << " "
+         << student.address << endl;
+
+    file.close();
+
+    cout << "Student added successfully!" << endl;
+}
+
+void deleteStudent() {
+    int rollNumber;
+    bool found = false;
+    ifstream inputFile("students.txt");
+    ofstream tempFile("temp.txt");
+
+    cout << "Enter Roll Number of the student to delete: ";
+    cin >> rollNumber;
+
+    int currentRollNumber;
+    string line;
+
+    while (getline(inputFile, line)) {
+        stringstream ss(line);
+        ss >> currentRollNumber;
+
+        if (currentRollNumber == rollNumber) {
+            found = true;
+            continue;
+        }
+
+        tempFile << line << endl;
+    }
+
+    inputFile.close();
+    tempFile.close();
+
+    remove("students.txt");
+    rename("temp.txt", "students.txt");
+
+    if (found) {
+        cout << "Student record deleted successfully!" << endl;
+    } else {
+        cout << "Student record not found." << endl;
+    }
+}
+
+void displayStudents() {
+    ifstream file("students.txt");
+
+    if (!file.is_open()) {
+        cout << "No student records found." << endl;
+        return;
+    }
+
+    cout << "Student Details:" << endl;
+    cout << "Roll Number\tName\tDivision\tAddress" << endl;
+
+    int rollNumber;
+    string name;
+    char division;
+    string address;
+
+    while (file >> rollNumber >> name >> division >> address) {
+        cout << rollNumber << "\t\t" << name << "\t" << division << "\t\t" << address << endl;
+    }
+
+    file.close();
+}
+
+int main() {
+    int choice;
+
+    do {
+        cout << "********** Student Information System **********" << endl;
+        cout << "1. Add Student" << endl;
+        cout << "2. Delete Student" << endl;
+        cout << "3. Display Students" << endl;
+        cout << "4. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                addStudent();
+                break;
+            case 2:
+                deleteStudent();
+                break;
+            case 3:
+                displayStudents();
+                break;
+            case 4:
+                cout << "Exiting program. Goodbye!" << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+
+        cout << endl;
+
+    } while (choice != 4);
+
+    return 0;
+}

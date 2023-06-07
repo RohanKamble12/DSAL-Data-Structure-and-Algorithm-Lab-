@@ -1,0 +1,132 @@
+#include <iostream>
+
+using namespace std;
+
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+};
+
+Node* createNode(int value) {
+    Node* newNode = new Node();
+    if (newNode) {
+        newNode->data = value;
+        newNode->left = newNode->right = NULL;
+    }
+    return newNode;
+}
+
+Node* insertNode(Node* root, int value) {
+    if (root == NULL) {
+        return createNode(value);
+    }
+    if (value < root->data) {
+        root->left = insertNode(root->left, value);
+    }
+    else if (value > root->data) {
+        root->right = insertNode(root->right, value);
+    }
+    return root;
+}
+
+int findMinValue(Node* root) {
+    if (root == NULL) {
+        cout << "Error: Tree is empty." << endl;
+        return -1;
+    }
+    while (root->left != NULL) {
+        root = root->left;
+    }
+    return root->data;
+}
+
+bool searchValue(Node* root, int value) {
+    if (root == NULL) {
+        return false;
+    }
+    if (value == root->data) {
+        return true;
+    }
+    else if (value < root->data) {
+        return searchValue(root->left, value);
+    }
+    else {
+        return searchValue(root->right, value);
+    }
+}
+
+void printTree(Node* root) {
+    if (root == NULL) {
+        return;
+    }
+    printTree(root->left);
+    cout << root->data << " ";
+    printTree(root->right);
+}
+
+int main() {
+    Node* root = NULL;
+    int numValues;
+
+    cout << "Enter the number of values to add: ";
+    cin >> numValues;
+
+    cout << "Enter the values to add: ";
+    for (int i = 0; i < numValues; i++) {
+        int value;
+        cin >> value;
+        root = insertNode(root, value);
+    }
+
+    cout << "Binary Search Tree constructed successfully." << endl;
+
+    int option;
+    do {
+        cout << "\nOperations Menu:\n";
+        cout << "1. Insert new node\n";
+        cout << "2. Minimum data value found in the tree\n";
+        cout << "3. Search a value\n";
+        cout << "4. Print tree\n";
+        cout << "0. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> option;
+
+        switch (option) {
+            case 1:
+                int newValue;
+                cout << "Enter the value to insert: ";
+                cin >> newValue;
+                root = insertNode(root, newValue);
+                cout << "Value inserted successfully." << endl;
+                break;
+            case 2:
+                cout << "Minimum value in the tree: " << findMinValue(root) << endl;
+                break;
+            case 3:
+                int searchVal;
+                cout << "Enter the value to search: ";
+                cin >> searchVal;
+                if (searchValue(root, searchVal)) {
+                    cout << "Value found in the tree." << endl;
+                }
+                else {
+                    cout << "Value not found in the tree." << endl;
+                }
+                break;
+            case 4:
+                cout << "Binary Search Tree: ";
+                printTree(root);
+                cout << endl;
+                break;
+            case 0:
+                cout << "Exiting the program. Goodbye!" << endl;
+                break;
+            default:
+                cout << "Invalid option. Please try again." << endl;
+                break;
+        }
+    } while (option != 0);
+
+    return 0;
+}

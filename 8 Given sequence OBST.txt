@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <iostream>
+#include <string.h>
+#define MAX 10
+char s[MAX][20];
+#define INT_MAX 9999
+using namespace std;
+
+int SearchMinValue(float c[MAX][MAX], int i, int j)
+{
+    int ReturnValue = 0, min = INT_MAX;
+    for (int k = i + 1; k <= j; k++)
+    {
+        if (min > (c[i][k - 1] + c[k][j]))
+        {
+            min = c[i][k - 1] + c[k][j];
+            ReturnValue = k;
+        }
+    }
+    return ReturnValue;
+}
+
+void obst(int n, float p[MAX], float q[MAX])
+{
+    float w[MAX][MAX], c[MAX][MAX], r[MAX][MAX];
+    memset(w, 0, sizeof(w));
+    memset(c, 0, sizeof(c));
+    memset(r, 0, sizeof(r));
+
+    for (int i = 0; i <= n; i++)
+    {
+        w[i][i] = q[i];
+        c[i][i] = 0;
+        r[i][i] = 0;
+    }
+
+    for (int k = 1; k <= n; k++)
+    {
+        for (int i = 0; i <= (n - k); i++)
+        {
+            int j = i + k;
+            w[i][j] = p[j] + q[j] + w[i][j - 1];
+            int a = SearchMinValue(c, i, j);
+            c[i][j] = w[i][j] + c[i][a - 1] + c[a][j];
+            r[i][j] = a;
+        }
+    }
+
+    for (int i = 0; i <= n; i++)
+        cout << "w(" << i << "," << i << ")=" << w[i][i] << "\t";
+    cout << endl;
+    for (int i = 0; i <= n; i++)
+        cout << "c(" << i << "," << i << ")=" << c[i][i] << "\t";
+    cout << endl;
+    for (int i = 0; i <= n; i++)
+        cout << "r(" << i << "," << i << ")=" << r[i][i] << "\t";
+    cout << "\n";
+
+    for (int j = 1; j <= n; j++)
+    {
+        for (int i = 0, k = j; k <= n; i++, k++)
+            cout << "w(" << i << "," << k << ")=" << w[i][k] << "\t";
+        cout << endl;
+        for (int i = 0, k = j; k <= n; i++, k++)
+            cout << "c(" << i << "," << k << ")=" << c[i][k] << "\t";
+        cout << endl;
+        for (int i = 0, k = j; k <= n; i++, k++)
+            cout << "r(" << i << "," << k << ")=" << r[i][k] << "\t";
+        cout << endl;
+    }
+
+    cout << "\nMinimum Cost = " << c[0][n] << endl;
+}
+
+int accept(float p[MAX], float q[MAX])
+{
+    int n;
+    cout << "\t\t:::: Optimal Binary Search Tree (OBST) ::::" << "\n\nEnter the number of nodes : ";
+    cin >> n;
+    for (int i = 0; i < n; i++)
+    {
+        cout << "\nInput Node " << i + 1 << " : ";
+        cin >> s[i + 1];
+    }
+    for (int i = 1; i <= n; i++)
+    {
+        cout << "\nEnter the successful probability P" << i << " : ";
+        cin >> p[i];
+    }
+    for (int i = 0; i <= n; i++)
+    {
+        cout << "\nEnter the unsuccessful probability Q" << i << " : ";
+        cin >> q[i];
+    }
+    return n;
+}
+
+int main()
+{
+    float p[MAX], q[MAX];
+    int n;
+    n = accept(p, q);
+    obst(n, p, q);
+
+    return 0;
+}
