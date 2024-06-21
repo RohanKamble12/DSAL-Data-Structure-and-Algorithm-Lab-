@@ -1,1 +1,1 @@
-SPPU 2nd Year Computer Engineering (2019 Pattern) - Data Structures and Algorithms Practicals
+Welcome to the repository containing all practical codes for the Data Structures Algorithm Lab , as per the 2019 pattern of Savitribai Phule Pune University (SPPU) for 2nd-year Computer Engineering students.
